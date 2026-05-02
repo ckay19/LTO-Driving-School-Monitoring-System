@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Login</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <!-- PRELOAD BACKGROUND IMAGE -->
+    <link rel="preload" as="image" href="{{ url_for('static', filename='lto.png') }}">
+</head>
+<body>
+
+<h2>Edit Driving School</h2>
+
+<form method="POST">
+    Business ID <input type="text" name="bus_id"><br>
+    Accreditation No. <input type="text" name="accreditation"><br>
+    Business Name <input type="text" name="bus_name"><br>
+    Status <input type="text" name="status"><br>
+    CDE <input type="text" name="cde"><br>
+    TDC <input type="text" name="tdc"><br>
+    PDC <input type="text" name="pdc"><br>
+    Total <input type="text" name="total"><br>
+    Address <input type="text" name="org_add"><br>
+    Organization Type <input type="text" name="org_type"><br>
+    Region <input type="text" name="region"><br>
+    <button type="submit">Update</button>
+</form>
+
+</body>
+</html>
