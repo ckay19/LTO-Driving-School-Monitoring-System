@@ -162,48 +162,6 @@
         "BARMM": 17
     };
 
-/*const searchInput = document.getElementById("searchInput");
-const regionFilter = document.getElementById("regionFilter");
-
-function filterTable() {
-    let search = searchInput.value.toLowerCase();
-    let region = regionFilter.value.toLowerCase();
-
-    let rows = document.querySelectorAll("#tableBody tr");
-    let visibleCount = 0;
-
-    rows.forEach(row => {
-        // skip empty row if exists
-        if (row.id === "emptyRow") return;
-
-        let cells = row.getElementsByTagName("td");
-
-        let textMatch = false;
-        let regionMatch = false;
-
-        // TEXT SEARCH
-        for (let i = 0; i < cells.length; i++) {
-            if (cells[i].textContent.toLowerCase().includes(search)) {
-                textMatch = true;
-                break;
-            }
-        }
-
-        // REGION MATCH
-        let regionCell = cells[7];
-        if (regionCell) {
-            regionMatch = region === "" ||
-            regionCell.textContent.toLowerCase() === region;
-        }
-
-        if (textMatch && regionMatch) {
-            row.style.display = "";
-            visibleCount++;
-        } else {
-            row.style.display = "none";
-        }
-    });*/
-
 let currentPage = 1;
 
 function fetchData(page = 1) {
