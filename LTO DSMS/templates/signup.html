@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Sign Up</title>
+    <!-- PRELOAD BACKGROUND IMAGE -->
+    <link rel="preload" as="image" href="{{ url_for('static', filename='lto(2).png') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="{% if show_otp %}otp-active{% endif %}">
+
+<div class="login-form">
+
+    <h2>Sign Up</h2>
+
+    <form method="POST" action="/signup">
+
+        Email:
+        <input type="text" name="Email" placeholder="Enter your email address"
+            value="{{ email|default('') }}"
+            style="border: 1px solid {% if errors and errors.email %}red{% else %}#ccc{% endif %};" required>
+
+        {% if errors and errors.email %}
+            <p class="error">{{ errors.email }}</p>
+        {% endif %}
+
+        Username:
+        <input type="text" name="username" placeholder="Enter your username"
+            value="{{ username|default('') }}"
+            style="border: 1px solid {% if errors and errors.username %}red{% else %}#ccc{% endif %};" required>
+
+        {% if errors and  errors.username %}
+            <p class="error">{{ errors.username }}</p>
+        {% endif %}
+
+        Password:
+        <div class="password-container">
+            <input type="password" id="password" name="password"
+                placeholder="Enter your password"
+                style="border: 1px solid {% if errors and errors.password %}red{% else %}#ccc{% endif %};"
+                required>
+
+            <i id="togglePassword" class="bi bi-eye-slash toggle-password"></i>
+        </div>
+
+        {% if errors and  errors.password %}
+            <p class="error">{{ errors.password }}</p>
+        {% endif %}
+
+        Confirm Password:
+        <div class="password-container">
+            <input type="password" id="confirm_password" name="confirm_password"
+                placeholder="Re-enter your password"
+                style="border: 1px solid {% if errors and errors.confirm_password %}red{% else %}#ccc{% endif %};"
+                required>
+
+            <i id="toggleConfirmPassword" class="bi bi-eye-slash toggle-password"></i>
+        </div>
+
+        {% if errors and errors.confirm_password %}
+            <p class="error">{{ errors.confirm_password }}</p>
+        {% endif %}
+
+        <!-- Client-side confirm password error (shown before form submit) -->
+        <p class="error" id="confirmPasswordError" style="display:none;">Passwords do not match.</p>
+
+        <button type="submit">Sign Up</button>
+
+        <p style="margin-top:15px; text-align:center;">
+            Already have an account?
+            <a href="{{ url_for('login') }}">Login</a>
+        </p>
+
+        {% if errors and errors.general %}
+            <p class="error-msg">{{ errors.general }}</p>
+        {% endif %}
+
+    </form>
+
+</div>
+
+{% if show_otp %}
+<div class="otp-modal">
+    <div class="otp-content" id="otpBox">
+
+        <!-- CLOSE BUTTON -->
+        <span class="close-otp" onclick="closeOTP()">&times;</span>
+
+        <h3>Email Verification</h3>
+
+        <form method="POST" action="/verify_otp" id="otpForm">
+            <input type="hidden" name="email" value="{{ email }}">
+            <input type="hidden" name="otp" id="finalOtp">
+
+            <div class="otp-inputs">
+                <input type="text" maxlength="1" class="otp-digit">
+                <input type="text" maxlength="1" class="otp-digit">
+                <input type="text" maxlength="1" class="otp-digit">
+                <input type="text" maxlength="1" class="otp-digit">
+                <input type="text" maxlength="1" class="otp-digit">
+                <input type="text" maxlength="1" class="otp-digit">
+            </div>
+
+            <p id="timer"></p>
+
+            <button type="submit">Verify OTP</button>
+
+            <div class="otp-actions">
+                <button type="button" id="resendBtn" onclick="resendOTP()" disabled>
+                    Resend OTP
+                </button>
+            </div>
+
+            {% if otp_error %}
+                <p class="otp-error">{{ otp_error }}</p>
+            {% endif %}
+
+        </form>
+    </div>
+</div>
+
+{% endif %}
+
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Toggle Password Script -->
+    <script>
+    const toggle = document.getElementById("togglePassword");
+    const password = document.getElementById("password");
+
+    toggle.addEventListener("click", function () {
+        if (password.type === "password") {
+            password.type = "text";
+            this.classList.remove("bi-eye-slash");
+            this.classList.add("bi-eye");
+        } else {
+            password.type = "password";
+            this.classList.remove("bi-eye");
+            this.classList.add("bi-eye-slash");
+        }
+    });
+
+    const toggleConfirm = document.getElementById("toggleConfirmPassword");
+    const confirmPassword = document.getElementById("confirm_password");
+
+    toggleConfirm.addEventListener("click", function () {
+        if (confirmPassword.type === "password") {
+            confirmPassword.type = "text";
+            this.classList.remove("bi-eye-slash");
+            this.classList.add("bi-eye");
+        } else {
+            confirmPassword.type = "password";
+            this.classList.add("bi-eye-slash");
+            this.classList.remove("bi-eye");
+            
+        }
+    });
+
+    const inputs = document.querySelectorAll(".otp-digit");
+    const finalOtp = document.getElementById("finalOtp");
+    const form = document.getElementById("otpForm");
+    const otpBox = document.getElementById("otpBox");
+
+    /* AUTO MOVE + AUTO SUBMIT */
+    inputs.forEach((input, index) => {
+        input.addEventListener("input", () => {
+            if (input.value.length === 1 && index < inputs.length - 1) {
+                inputs[index + 1].focus();
+            }
+            updateOTP();
+
+            // Auto submit when full
+            if (finalOtp.value.length === 6) {
+                form.submit();
+            }
+        });
+
+        input.addEventListener("keydown", (e) => {
+            if (e.key === "Backspace" && index > 0 && !input.value) {
+                inputs[index - 1].focus();
+            }
+        });
+    });
+
+    /* PASTE SUPPORT */
+    document.addEventListener("paste", (e) => {
+        let paste = (e.clipboardData || window.clipboardData).getData("text");
+        if (paste.length === 6) {
+            inputs.forEach((input, i) => {
+                input.value = paste[i];
+            });
+            updateOTP();
+            form.submit();
+        }
+    });
+
+    /* COMBINE OTP */
+    function updateOTP() {
+        let otp = "";
+        inputs.forEach(input => otp += input.value);
+        finalOtp.value = otp;
+    }
+
+    /* TIMER (PERSIST EVEN AFTER REFRESH) */
+    const timer = document.getElementById("timer");
+    const resendBtn = document.getElementById("resendBtn");
+
+    // unique key per email
+    const otpKey = "otp_expiry_{{ email }}";
+
+    // get stored expiry
+    let expiryTime = localStorage.getItem(otpKey);
+
+    if (!expiryTime) {
+        expiryTime = Date.now() + ({{ otp_time_left | default(300) }} * 1000);
+        localStorage.setItem(otpKey, expiryTime);
+    } else { 
+        expiryTime = parseInt(expiryTime);
+    }
+
+    let countdown;
+
+    function startCountdown() {
+
+        clearInterval(countdown);
+
+        countdown = setInterval(() => {
+            let now = new Date().getTime();
+            let timeLeft = Math.floor((expiryTime - now) / 1000);
+
+            if (timeLeft <= 0) {
+                clearInterval(countdown);
+                timer.textContent = "Expired";
+                resendBtn.disabled = false;
+
+                localStorage.removeItem(otpKey);
+                return;
+            }
+
+            let minutes = Math.floor(timeLeft / 60);
+            let seconds = timeLeft % 60;
+
+            timer.textContent =
+                `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+
+        }, 1000);
+    }
+
+    startCountdown();
+
+    /* RESEND */
+    function resendOTP() {
+        const resendBtn = document.getElementById("resendBtn");
+        resendBtn.disabled = true;
+
+        fetch("/resend_otp", {
+            method: "POST"
+        })
+        .then(res => res.json())
+        .then(data => {
+
+            if (data.success) {
+
+                // Clear error message
+                const errorMsg = document.querySelector(".otp-error");
+                if (errorMsg) errorMsg.textContent = "";
+
+                // Reset timer using backend expiry
+                localStorage.setItem(otpKey, data.expiry);
+
+                expiryTime = data.expiry;
+
+                // Restart countdown
+                startCountdown();
+
+            } else {
+                alert(data.message);
+            }
+
+        })
+        .catch(err => {
+            console.error(err);
+            alert("Error resending OTP");
+        });
+    }
+
+    /* CLOSE MODAL */ 
+    function closeOTP() {
+        window.location.href = "/signup";
+    }
+
+    /* SHAKE IF ERROR */
+    {% if otp_error %}
+        otpBox.classList.add("shake");
+    {% endif %}
+    </script>
+
+    
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <script>
+    function togglePassword() {
+        const pass = document.getElementById("password");
+
+        if (pass.type === "password") {
+            pass.type = "text";
+        } else {
+            pass.type = "password";
+        }
+    }
+    </script>
+</body>
+</html>
