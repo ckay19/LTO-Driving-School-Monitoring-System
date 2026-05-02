@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Admin Panel</title>
+    <!-- PRELOAD BACKGROUND IMAGE -->
+    <link rel="preload" as="image" href="{{ url_for('static', filename='dashboard.png') }}">
+    <!-- MAIN ADMIN CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='base_admin.css') }}">
+
+    <div class="page-header">
+        <div class="header-left">
+        <img src="{{ url_for('static', filename='logo.png') }}" alt="LTO Logo" class="logo">
+        DRIVING SCHOOL MONITORING SYSTEM
+        </div>
+
+        <div class="header-right">
+            <!-- <a href="/admin/users" class="nav-link">👤 Users</a>
+            <a href="/admin/logs" class="nav-link">📄 Audit Logs</a>
+            <a href="/admin/schools" class="nav-link active">🏫 Driving Schools</a>
+            <a href="/logout" class="nav-link logout">Logout</a>
+        </div> -->
+            <a href="/admin/users" 
+                class="nav-link {% if request.path == '/admin/users' %}active{% endif %}">
+                Users
+            </a>
+
+            <a href="/admin/logs" 
+                class="nav-link {% if request.path == '/admin/logs' %}active{% endif %}">
+                Audit Logs
+            </a>
+
+            <a href="/admin/schools" 
+                class="nav-link {% if request.path == '/admin/schools' %}active{% endif %}">
+                Driving Schools
+            </a>
+
+            <a href="/logout" class="nav-link logout">Logout</a>
+        </div>
+
+    </div>
+
+    <!-- PAGE CSS (dynamic) -->
+    <!-- {% block page_css %}{% endblock %}-->
+</head>
+
+<body>
+
+    <div class="main-content" id="main">
+        {% block content %}{% endblock %}
+    </div>
+
+</body>
+</html>

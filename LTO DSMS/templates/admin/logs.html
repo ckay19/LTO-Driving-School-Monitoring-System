@@ -1,0 +1,177 @@
+{% extends 'admin/base_admin.html' %}
+
+{% block content %}
+<!-- <h2>Audit Logs</h2> -->
+
+<!-- FILTERS -->
+<form method="GET" id="filterForm" class="audit-filter">
+
+    <!-- LEFT SIDE -->
+    <div class="filters-left">
+
+        <!-- DATES -->
+        <div class="filters-dates">
+            <div class="date-group">
+                <label>From</label>
+                <input type="date" name="date_from" id="dateFrom">
+            </div>
+
+            <div class="date-group">
+                <label>To</label>
+                <input type="date" name="date_to" id="dateTo">
+            </div>
+        </div>
+
+        <!-- EXPORT -->
+        <button type="submit" formaction="/export_logs" class="export-btn">
+            📊 Export CSV
+        </button>
+
+    </div>
+
+    <!-- RIGHT SIDE -->
+    <div class="filters-right">
+
+        <input type="text" name="search" id="search" placeholder="Search User">
+
+        <div class="filters-bar">
+            <select name="role" id="role">
+                <option value="">All Roles</option>
+                <option value="admin">Admin</option>
+                <option value="user">User</option>
+            </select>
+        </div>
+    </div>
+
+</form>
+
+<table border="1">
+    <thead>
+        <tr>
+            <th>Role</th>
+            <th>User</th>
+            <th>Action</th>
+            <th>Time</th>
+        </tr>
+    </thead>
+    <tbody id="tableBody">
+        {% for log in logs %}
+        <tr class="{{ log[1] }}">
+            <td>{{ log[1] }}</td>
+            <td>{{ log[2] }}</td>
+            <td>{{ log[3] }}</td>
+            <td>{{ log[4] }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    // DEFINE ALL ELEMENTS
+    const searchInput = document.getElementById("search");
+    const roleFilter = document.getElementById("role");
+    const dateFromInput = document.getElementById("dateFrom");
+    const dateToInput = document.getElementById("dateTo");
+
+    function filterTable() {
+        let search = searchInput.value.toLowerCase();
+        let role = roleFilter.value.toLowerCase();
+
+        let dateFrom = dateFromInput.value;
+        let dateTo = dateToInput.value;
+
+        let rows = document.querySelectorAll("#tableBody tr");
+        let visibleCount = 0;
+
+        rows.forEach(row => {
+
+            if (row.id === "emptyRow") return;
+
+            let cells = row.getElementsByTagName("td");
+
+            let rowRole = cells[0].textContent.toLowerCase();
+            let rowUser = cells[1].textContent.toLowerCase();
+            let rowAction = cells[2].textContent.toLowerCase();
+
+            // DATE HANDLING
+            let rowTime = cells[3].textContent.trim();
+            let rowDate = new Date(rowTime);
+
+            // If invalid date → skip filter safely
+            if (isNaN(rowDate)) {
+                row.style.display = "";
+                return;
+            }
+
+            // TEXT SEARCH
+            let textMatch =
+                rowUser.includes(search) ||
+                rowAction.includes(search) ||
+                rowRole.includes(search);
+
+            // ROLE FILTER
+            let roleMatch = role === "" || rowRole === role;
+
+            // DATE RANGE FILTER
+            let dateMatch = true;
+
+            if (dateFrom) {
+                let fromDate = new Date(dateFrom);
+                if (rowDate < fromDate) dateMatch = false;
+            }
+
+            if (dateTo) {
+                let toDate = new Date(dateTo);
+                toDate.setHours(23, 59, 59, 999);
+                if (rowDate > toDate) dateMatch = false;
+            }
+
+            if (textMatch && roleMatch && dateMatch) {
+                row.style.display = "";
+                visibleCount++;
+            } else {
+                row.style.display = "none";
+            }
+        });
+
+        // EMPTY STATE
+        let oldEmpty = document.getElementById("emptyRow");
+        if (oldEmpty) oldEmpty.remove();
+
+        //  EMPTY STATE HANDLING
+        if (visibleCount === 0) {
+            let tbody = document.getElementById("tableBody");
+
+            let row = document.createElement("tr");
+            row.id = "emptyRow";
+            row.innerHTML = `
+                <td colspan="4" style="text-align:center; padding:20px;">
+                    No records found.
+                </td>
+            `;
+
+            tbody.appendChild(row);
+        }
+    }
+
+    // EVENTS
+    searchInput.addEventListener("input", filterTable);
+    roleFilter.addEventListener("change", filterTable);
+    dateFromInput.addEventListener("change", filterTable);
+    dateToInput.addEventListener("change", filterTable);
+
+});
+</script>
+
+<script>
+document.getElementById("filterForm")
+.addEventListener("keydown", function(e){
+    if(e.key === "Enter"){
+        e.preventDefault();
+    }
+});
+</script>
+
+{% endblock %}

@@ -1,0 +1,22 @@
+{% extends 'admin/base_admin.html' %}
+
+{% block content %}
+<h2>Registered Users</h2>
+
+<table border="1">
+<tr>
+    <th>Email</th>
+    <th>Username</th>
+    <th>Password</th>
+
+</tr>
+
+{% for user in users %}
+<tr>
+    <td>{{ user[1] }}</td>
+    <td>{{ user[2] }}</td>
+    <td>{{ user[3] }}</td>
+</tr>
+{% endfor %}
+</table>
+{% endblock %}

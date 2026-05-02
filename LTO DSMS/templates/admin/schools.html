@@ -1,0 +1,1147 @@
+{% extends 'admin/base_admin.html' %}
+
+{% block content %}
+<link rel="stylesheet" href="{{ url_for('static', filename='base_admin.css') }}">
+
+<div id="flashBox"></div>
+
+<div class="top-bar">
+
+    <div class="header-left">
+        <button onclick="openModal()">➕ Add New</button>
+        <button onclick="openExportChoice('excel')">📊 Export Excel</button>
+        <button onclick="openExportChoice('pdf')">📄 Export PDF</button>
+    </div>
+
+    <div class="search-filter">
+        <input
+        type="text"
+        name="search" 
+        id="searchInput"
+        placeholder="Search by ID or Name"
+        value="{{ request.args.get('search','') }}"
+    >
+
+    <input type="hidden" name="page" value="1">
+        
+        <div class="filter-bar">
+            <select name="region" id="regionFilter">
+                <option value="">All Regions</option>
+                <option value="NCR"{{ 'selected' if request.args.get('region') == 'NCR' else '' }}>NCR</option>
+                <option value="CAR"{{ 'selected' if request.args.get('region') == 'CAR' else '' }}>CAR</option>
+                <option value="Region I"{{ 'selected' if request.args.get('region') == 'Region I' else '' }}>Region I</option>
+                <option value="Region II"{{ 'selected' if request.args.get('region') == 'Region II' else '' }}>Region II</option>
+                <option value="Region III"{{ 'selected' if request.args.get('region') == 'Region III' else '' }}>Region III</option>
+                <option value="Region IV-A"{{ 'selected' if request.args.get('region') == 'Region IV-A' else '' }}>Region IV-A</option>
+                <option value="Region IV-B"{{ 'selected' if request.args.get('region') == 'Region IV-B' else '' }}>Region IV-B</option>
+                <option value="Region V"{{ 'selected' if request.args.get('region') == 'Region V' else '' }}>Region V</option>
+                <option value="Region VI"{{ 'selected' if request.args.get('region') == 'Region VI' else '' }}>Region VI</option>
+                <option value="Region VII"{{ 'selected' if request.args.get('region') == 'Region VII' else '' }}>Region VII</option>
+                <option value="Region VIII"{{ 'selected' if request.args.get('region') == 'Region VIII' else '' }}>Region VIII</option>
+                <option value="Region IX"{{ 'selected' if request.args.get('region') == 'Region IX' else '' }}>Region IX</option>
+                <option value="Region X"{{ 'selected' if request.args.get('region') == 'Region X' else '' }}>Region X</option>
+                <option value="Region XI"{{ 'selected' if request.args.get('region') == 'Region XI' else '' }}>Region XI</option>
+                <option value="Region XII"{{ 'selected' if request.args.get('region') == 'Region XII' else '' }}>Region XII</option>
+                <option value="Region XIII"{{ 'selected' if request.args.get('region') == 'Region XIII' else '' }}>Region XIII</option>
+                <option value="BARMM"{{ 'selected' if request.args.get('region') == 'BARMM' else '' }}>BARMM</option>
+            </select>
+        </div>
+    </div>
+</div>
+
+<table border="1">
+<thead>
+<tr>
+    <th>Business ID</th>
+    <th>Accreditation No.</th>
+    <th>Business Name</th>
+    <th>CDE</th>
+    <th>TDC</th>
+    <th>PDC</th>
+    <th>Total</th>
+    <th>Address</th>
+    <th>Organization Type</th>
+    <th>Validity (yyyy/mm/dd)</th>
+    <th>Status</th>
+    <th>Region</th>
+    <th>Actions</th>
+</tr>
+</thead>
+
+<tbody id="tableBody">
+
+    {% for school in schools %}
+    <!-- <tr class="status-{{ school[-3]|lower|replace(' ', '-') }}"> -->
+    <tr data-id="{{ school[0] }}" class="status-{{ school[-3]|lower|replace(' ', '-') }}">
+        <td data-field="bus_id">{{ school[1] }}</td>
+        <td data-field="accreditation">{{ school[2] }}</td>
+        <td data-field="bus_name">{{ school[3] }}</td>
+        <td data-field="cap1">{{ school[4] }}</td>
+        <td data-field="cap2">{{ school[5] }}</td>
+        <td data-field="cap3">{{ school[6] }}</td>
+        <td class="total">{{ school[7] }}</td>
+    
+        <td data-field="org_add">{{ school[8] }}</td>
+        <td data-field="org_type">{{ school[9] }}</td>
+        <td data-field="validity">{{ school[-1] }}</td>
+        <!-- USE COMPUTED STATUS -->
+        <td>
+            <span class="status-{{ school[-3]|lower|replace(' ', '-') }}">
+                {{ school[-2] }}
+            </span>
+        </td>
+        <td data-field="region">{{ school[12] }}</td>
+    
+        <td class="action-buttons">
+            <button onclick="enableEdit(this)">✏️ Edit</button>
+            <button onclick="saveRow(this)" style="display:none;">💾 Save</button>
+            <button onclick="cancelEdit(this)" style="display:none;">❌ Cancel</button>
+            <button onclick="deleteRow(this)" style="color:white;">🗑️ Delete</button>
+        </td>
+    </tr>
+    {% endfor %}
+</tbody>
+</table>
+
+<div class="pagination">
+
+    <!-- Previous -->
+    {% if page > 1 %}
+        <a href="?page={{ page - 1 }}&search={{ search }}&region={{ region }}">⬅ Prev</a>
+    {% endif %}
+
+    <!-- Page numbers -->
+    {% for p in range(1, total_pages + 1) %}
+        {% if p == page %}
+            <strong>{{ p }}</strong>
+        {% else %}
+            <a href="?page={{ p }}&search={{ search }}&region={{ region }}">{{ p }}</a>
+        {% endif %}
+    {% endfor %}
+
+    <!-- Next -->
+    {% if page < total_pages %}
+        <a href="?page={{ page + 1 }}&search={{ search }}&region={{ region }}">Next ➡</a>
+    {% endif %}
+
+</div>
+
+<!-- ADD MODAL -->
+<div id="addModal" class="modal">
+    <div class="modal-content">
+        <h3>Enroll Driving School</h3>
+        
+        <input type="text" id="bus_id" placeholder="Business ID" required>
+        <input type="text" id="accreditation" placeholder="Accreditation No." required>
+        <input type="text" id="bus_name" placeholder="Business Name" required>
+        
+        <div class="cap-group">
+            <input class="cap1" type="number" min="0" step="1" placeholder="CDE"
+                oninput="handleInput(this)" required>
+
+            <input class="cap2" type="number" min="0" step="1" placeholder="TDC"
+                oninput="handleInput(this)" required>
+
+            <input class="cap3" type="number" min="0" step="1" placeholder="PDC"
+                oninput="handleInput(this)" required>
+
+            <input class="total" type="number" placeholder="Total" readonly>
+        </div>
+        
+        <select id="region" required>
+            <option value="">Select Region</option>
+            <option value="NCR">NCR</option>
+            <option value="CAR">CAR</option>
+            <option value="Region I">Region I</option>
+            <option value="Region II">Region II</option>
+            <option value="Region III">Region III</option>
+            <option value="Region IV-A">Region IV-A</option>
+            <option value="Region IV-B">Region IV-B</option>
+            <option value="Region V">Region V</option>
+            <option value="Region VI">Region VI</option>
+            <option value="Region VII">Region VII</option>
+            <option value="Region VIII">Region VIII</option>
+            <option value="Region IX">Region IX</option>
+            <option value="Region X">Region X</option>
+            <option value="Region XI">Region XI</option>
+            <option value="Region XII">Region XII</option>
+            <option value="Region XIII">Region XIII</option>
+            <option value="BARMM">BARMM</option>
+        </select>
+
+        <div class="address-group">
+
+            <select id="province" name="province">
+                <option value="">Select Province</option>
+            </select>
+            <select id="city" name="city">
+                <option value="">Select City</option>
+            </select>
+            <select id="barangay" name="barangay">
+                <option value="">Select Barangay</option>
+            </select>
+
+            <input type="hidden" name="org_add" id="org_add">
+            <input type="text" name="street" id="street" placeholder="Street / Zone" required>
+            <input type="number" id="zipcode" placeholder="ZIP Code" required>
+        
+        </div>
+        <input type="text" id="org_type" name="org_type" placeholder="Organization Type" required>
+        <input type="date" id="validity" placeholder="Validity"required>
+        <select id="status" required>
+            <option value="">Select Status</option>
+            <option value="Active">Active</option>
+            <option value="Expired">Expired</option>
+            <option value="Pending">Pending</option>
+        </select>
+
+        <div class="modal-buttons">
+            <!-- <button onclick="submitNew()">Save</button>
+            <button onclick="closeModal()">Cancel</button> -->
+            <button type="button" onclick="submitNew()">Save</button>
+            <button type="button" onclick="closeModal()">Cancel</button>
+        </div>
+    </div>
+
+</div>
+
+<!-- CONFIRM DELETE MODAL -->
+<div id="confirmModal" class="modal">
+    <div class="confirm-box">
+
+        <h3 class="confirm-title">Delete Confirmation</h3> 
+
+        <p id="confirmText" class="confirm-text">
+            Are you sure you want to delete this record?
+        </p>
+
+        <div class="confirm-actions">
+            <button id="confirmYes" class="btn-danger">Delete</button>
+            <button onclick="closeConfirm()" class="btn-secondary">Cancel</button>
+        </div>
+
+    </div>
+</div>
+
+<div id="exportChoiceModal" class="export-modal" style="display:none;">
+    <div class="export-box">
+
+        <h3>Export Data</h3>
+
+        <label>
+            <input type="radio" name="exportMode" value="all" checked onchange="toggleExportRegion()">
+            All Data
+        </label>
+
+        <br><br>
+
+        <label>
+            <input type="radio" name="exportMode" value="region" onchange="toggleExportRegion()">
+            By Region
+        </label> 
+
+        <br><br>
+
+        <select id="exportRegionSelect" class="hidden"> 
+            <option value="" disabled selected>-- Select Region --</option>
+
+            <option value="NCR">NCR</option>
+            <option value="CAR">CAR</option>
+            <option value="Region I">Region I</option>
+            <option value="Region II">Region II</option>
+            <option value="Region III">Region III</option>
+            <option value="Region IV-A">Region IV-A</option>
+            <option value="Region IV-B">Region IV-B</option>
+            <option value="Region V">Region V</option>
+            <option value="Region VI">Region VI</option>
+            <option value="Region VII">Region VII</option>
+            <option value="Region VIII">Region VIII</option>
+            <option value="Region IX">Region IX</option>
+            <option value="Region X">Region X</option>
+            <option value="Region XI">Region XI</option>
+            <option value="Region XII">Region XII</option>
+            <option value="Region XIII">Region XIII</option>
+            <option value="BARMM">BARMM</option>
+        </select>
+
+        <br><br>
+
+        <button onclick="confirmExport('excel')">Export</button>
+        <button onclick="closeExportChoice()">Cancel</button>
+    </div>
+</div>
+
+<script>
+
+    const regionOrder = {
+        "NCR": 1,
+        "CAR": 2,
+        "Region I": 3,
+        "Region II": 4,
+        "Region III": 5,
+        "Region IV-A": 6,
+        "Region IV-B": 7,
+        "Region V": 8,
+        "Region VI": 9,
+        "Region VII": 10,
+        "Region VIII": 11,
+        "Region IX": 12,
+        "Region X": 13,
+        "Region XI": 14,
+        "Region XII": 15,
+        "Region XIII": 16,
+        "BARMM": 17
+    };
+
+let originalRowData = {};
+
+/*
+==================================================
+FULL PHILIPPINES ADDRESS SYSTEM
+==================================================
+*/
+const province = document.getElementById("province");
+const city = document.getElementById("city");
+const barangay = document.getElementById("barangay");
+const orgAdd = document.getElementById("org_add");
+
+function initProvinces() {
+    const province = document.getElementById("province");
+    const region = document.getElementById("region").value;
+    province.innerHTML = '<option value="">Select Province</option>';
+
+    if (region === "NCR") {
+
+        province.innerHTML = `
+            <option value="NCR" selected>Metro Manila</option>
+        `;
+
+        loadNcrCities();
+        return;
+    }
+
+    fetch('https://psgc.gitlab.io/api/provinces/')
+        .then(res => res.json())
+        .then(data => {
+            data.sort((a, b) => a.name.localeCompare(b.name));
+            data.forEach(p => {
+                province.innerHTML += `<option value="${p.code}">${p.name}</option>`;
+            });
+        });
+}
+
+function loadNcrCities() {
+
+    const city = document.getElementById("city");
+
+    city.innerHTML = '<option value="">Select City</option>';
+
+    fetch('https://psgc.gitlab.io/api/regions/130000000/cities-municipalities/')
+        .then(res => res.json())
+        .then(data => {
+
+            data.forEach(c => {
+                city.innerHTML += `
+                    <option value="${c.code}">
+                        ${c.name}
+                    </option>
+                `;
+            });
+        });
+}
+
+document.getElementById("region").addEventListener("change", function(){
+    initProvinces();
+});
+
+/* PROVINCE CHANGE */
+province.addEventListener("change", function(){
+
+    city.innerHTML =
+    '<option value="">Select City</option>';
+
+    barangay.innerHTML =
+    '<option value="">Select Barangay</option>';
+
+    orgAdd.value = "";
+
+    fetch(`https://psgc.gitlab.io/api/provinces/${this.value}/cities-municipalities/`)
+    .then(res => res.json())
+    .then(data => {
+
+        data.forEach(c => {
+            city.innerHTML += `
+                <option value="${c.code}">
+                    ${c.name}
+                </option>`;
+        });
+    });
+});
+
+/* CITY CHANGE */
+city.addEventListener("change", function(){
+
+    barangay.innerHTML =
+    '<option value="">Select Barangay</option>';
+
+    orgAdd.value = "";
+
+    fetch(`https://psgc.gitlab.io/api/cities-municipalities/${this.value}/barangays/`)
+    .then(res => res.json())
+    .then(data => {
+
+        data.forEach(b => {
+            barangay.innerHTML += `
+                <option value="${b.name}">
+                    ${b.name}
+                </option>`;
+        });
+    });
+});
+
+/* BUILD ADDRESS */
+barangay.addEventListener("change", function(){
+
+    let provinceName =
+    province.options[province.selectedIndex].text;
+
+    let cityName =
+    city.options[city.selectedIndex].text;
+
+    let brgyName =
+    barangay.value;
+
+    let street = document.getElementById("street").value.trim();
+
+    let zip = document.getElementById("zipcode").value;
+
+    orgAdd.value =
+    `${street}, ${brgyName}, ${cityName}, ${provinceName}, ${zip}`;
+});
+
+/* ================= ENABLE EDIT ================= */
+window.enableEdit = function (btn) {
+
+    try {
+
+        const row = btn.closest("tr");
+        const id = row.dataset.id;
+
+        originalRowData[id] = {};
+
+        // EDIT NORMAL CELLS
+        row.querySelectorAll("td[data-field]").forEach(cell => {
+
+            const field = cell.dataset.field;
+            const value = cell.innerText.trim();
+
+            originalRowData[id][field] = value;
+
+            let input;
+
+            if (["cap1","cap2","cap3"].includes(field)) {
+                input = document.createElement("input");
+                input.type = "number";
+                input.value = value;
+            }
+            else if (field === "validity") {
+                input = document.createElement("input");
+                input.type = "date";
+                input.value = value.includes("-") ? value : "";
+            }
+            else {
+                input = document.createElement("input");
+                input.type = "text";
+                input.value = value;
+            }
+
+            cell.innerHTML = "";
+            cell.appendChild(input);
+        });
+
+        // STATUS
+        const statusCell = row.querySelector("td:nth-child(11)");
+        const statusValue = statusCell.innerText.trim();
+
+        originalRowData[id]["status"] = statusValue;
+
+        statusCell.innerHTML = `
+            <select class="edit-input">
+                <option value="Active" ${statusValue === "Active" ? "selected" : ""}>Active</option>
+                <option value="Expired" ${statusValue === "Expired" ? "selected" : ""}>Expired</option>
+                <option value="Pending" ${statusValue === "Pending" ? "selected" : ""}>Pending</option>
+            </select>
+        `;
+
+        // REGION
+        const regionCell = row.querySelector("[data-field='region']");
+        if (regionCell && originalRowData[id]) {
+            regionCell.textContent = originalRowData[id]["region"] || "";
+        }
+        const regionValue = regionCell.innerText.trim();
+
+        originalRowData[id]["region"] = regionValue;
+
+        regionCell.innerHTML = `
+            <select class="edit-input">
+                <option value="" disabled>Select region</option>
+                ${Object.keys(regionOrder).map(r => `
+                    <option value="${r}" ${r === regionValue ? "selected" : ""}>
+                        ${r}
+                    </option>
+                `).join("")}
+            </select>
+        `;
+
+        toggleButtons(row, true);
+
+    } catch (err) {
+        console.error("enableEdit failed:", err);
+    }
+};
+
+function getPlaceholder(field) {
+
+    const map = {
+        bus_id: "Enter Business ID",
+        accreditation: "Enter Accreditation No.",
+        bus_name: "Enter Business Name",
+        cap1: "Enter CDE count",
+        cap2: "Enter TDC count",
+        cap3: "Enter PDC count",
+        org_add: "Enter Address",
+        org_type: "Enter Organization Type",
+        validity: "Select validity date",
+        region: "Select region",
+        status: "Select status"
+    };
+
+    return map[field] || "Enter value";
+}
+
+/* ================= SAVE ================= */
+window.saveRow = function (btn) {
+
+    const row = btn.closest("tr");
+    const id = row.dataset.id;
+
+    let data = { id: id };
+
+    row.querySelectorAll("td").forEach(cell => {
+
+        const input = cell.querySelector("input, select");
+    
+        if (input) {
+            const value = input.value;
+            cell.innerText = value;
+            data[cell.dataset.field] = value;
+        }
+    });
+
+    let cap1 = parseInt(data.cap1) || 0;
+    let cap2 = parseInt(data.cap2) || 0;
+    let cap3 = parseInt(data.cap3) || 0;
+
+    row.querySelector(".total").innerText = cap1 + cap2 + cap3;
+
+    fetch('/update_inline_full', {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify(data)
+    })
+    // .then(res=>res.json())
+    // .then(()=>alert("Saved!"));
+    .then(async res => {
+        const result = await res.json();
+
+        if (result.success) {
+            showFlash(result.message, "success");
+            toggleButtons(row, false);
+        } else {
+            showFlash(result.message || "Update failed!", "error");
+
+            // rollback UI
+            cancelEdit({ closest: () => row });
+        }
+    })
+    .catch(() => {
+        showFlash("Server error during update", "error");
+        cancelEdit({ closest: () => row });
+    });
+
+    toggleButtons(row,false);
+}
+
+/* ================= CANCEL ================= */
+window.cancelEdit = function (btn){
+
+    const row = btn.closest("tr");
+    const id = row.dataset.id;
+
+    if (!originalRowData[id]) return;
+
+    row.querySelectorAll("td[data-field]").forEach(cell => {
+        const field = cell.dataset.field;
+
+        // only restore editable fields
+        if (field && originalRowData[id]) {
+            cell.innerHTML = originalRowData[id][field];
+        }
+
+        cell.contentEditable = false;
+        cell.style.backgroundColor = "";
+    });
+
+    // ALSO FIX status (because it is NOT data-field in your row)
+    const statusCell = row.querySelector("td:nth-child(11)");
+    if (statusCell && originalRowData[id]) {
+        statusCell.innerText = originalRowData[id]["status"];
+    }
+
+    // SAFETY RESTORE (IMPORTANT for region fallback)
+    const regionCell = row.querySelector("[data-field='region']");
+    if (regionCell && originalRowData[id]["region"] !== undefined) {
+        regionCell.innerText = originalRowData[id]["region"];
+    }
+
+    toggleButtons(row, false);
+};
+
+/* ================= BUTTON TOGGLE ================= */
+function toggleButtons(row, editing) {
+
+    const editBtn = row.querySelector("button[onclick*='enableEdit']");
+    const saveBtn = row.querySelector("button[onclick*='saveRow']");
+    const cancelBtn = row.querySelector("button[onclick*='cancelEdit']");
+
+    if (!editBtn || !saveBtn || !cancelBtn) {
+        console.error("Missing buttons in row");
+        return;
+    }
+
+    editBtn.style.display = editing ? "none" : "inline";
+    saveBtn.style.display = editing ? "inline" : "none";
+    cancelBtn.style.display = editing ? "inline" : "none";
+}
+
+function openModal(){
+    document.getElementById("addModal").classList.add("show");
+    initProvinces();
+}
+
+function closeModal(){
+    document.getElementById("addModal").classList.remove("show");
+}
+
+function submitNew(){
+
+    const formData = new FormData();
+
+    let container = document.querySelector(".cap-group");
+
+    let barangay = document.getElementById("barangay").value.trim();
+    let city = document.getElementById("city").options[document.getElementById("city").selectedIndex].text.trim();
+    let province = document.getElementById("province").options[document.getElementById("province").selectedIndex].text.trim();
+    let zipcode = document.getElementById("zipcode").value.trim();
+    let street = document.getElementById("street").value.trim();
+
+    let fullAddress = `${street}, ${barangay}, ${city}, ${province}, ${zipcode}`.trim();
+
+    let data = {
+        bus_id: document.getElementById("bus_id").value.trim(),
+        accreditation: document.getElementById("accreditation").value.trim(),
+        bus_name: document.getElementById("bus_name").value.trim(),
+        cap1: container.querySelector(".cap1").value,
+        cap2: container.querySelector(".cap2").value,
+        cap3: container.querySelector(".cap3").value,
+        total: container.querySelector(".total").value,
+        // org_add: document.getElementById("org_add").value.trim(),
+        org_add: fullAddress,
+        org_type: document.getElementById("org_type").value.trim(),
+        validity: document.getElementById("validity").value,
+        status: document.getElementById("status").value,
+        region: document.getElementById("region").value
+    };
+
+    formData.append("bus_id", document.getElementById("bus_id").value);
+
+    //  VALIDATION CHECK
+    for (let key in data) {
+        if (data[key] === "" || data[key] === null) {
+            showFlash("Please fill out all fields before saving.", "error");
+            return;
+        }
+    }
+
+    // optional stricter check for selects
+    if (!data.status || !data.region) {
+        showFlash("Please select status and region.", "error");
+        return;
+    }
+
+    fetch('/add_inline', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+    })
+    .then(res => res.json())
+    .then(res => {
+        if (res.success) {
+            addRowToTable(res.new_row);
+            showFlash("Added successfully!", "success");
+            closeModal();
+            //clearModal();
+        } else {
+            showFlash(res.message || "Failed to add!", "error");
+        }
+    })
+    .catch(() => {
+        showFlash("Server error. Please try again.", "error");
+    });
+}
+
+document.getElementById("bus_id").addEventListener("blur", function () {
+
+    const input = this;
+    const busId = input.value.trim();
+
+    if (!busId) return;
+
+    fetch("/check_bus_id?bus_id=" + busId)
+        .then(res => res.json())
+        .then(data => {
+
+            if (data.exists) {
+                showFlash("Business ID already exists!", "error");
+                input.style.border = "2px solid red";
+            } else {
+                input.style.border = "";
+            }
+
+        })
+        .catch(() => {
+            showFlash("Unable to verify Business ID.", "error");
+        });
+});
+
+function addRowToTable(school){
+
+    let tbody = document.getElementById("tableBody");
+
+    let newRow = document.createElement("tr");
+    newRow.setAttribute("data-id", school.id);
+
+    let region = school.region || "";
+    let regionRank = regionOrder[region] || 99;
+
+    newRow.innerHTML = `
+        <td data-field="bus_id">${school.bus_id}</td>
+        <td data-field="accreditation">${school.accreditation}</td>
+        <td data-field="bus_name">${school.bus_name}</td>
+        <td data-field="cap1">${school.cap1}</td>
+        <td data-field="cap2">${school.cap2}</td>
+        <td data-field="cap3">${school.cap3}</td>
+        <td class="total">${school.total}</td>
+        <td data-field="org_add">${school.org_add}</td>
+        <td data-field="org_type">${school.org_type}</td>
+        <td data-field="validity">${school.validity}</td>
+        <td>
+            <span class="status-${(school.status || 'pending').toLowerCase()}">
+                ${school.status || 'Pending'}
+            </span>
+        </td>
+        <td data-field="region">${school.region}</td>
+        <td class="action-buttons">
+            <button onclick="enableEdit(this)">✏️ Edit</button>
+            <button onclick="saveRow(this)" style="display:none;">💾 Save</button>
+            <button onclick="cancelEdit(this)" style="display:none;">❌ Cancel</button>
+            <button onclick="deleteRow(this)">🗑️ Delete</button>
+        </td>
+    `;
+
+    //  FIND CORRECT POSITION
+    let inserted = false;
+
+    let rows = tbody.querySelectorAll("tr");
+
+    rows.forEach(row => {
+
+        if (inserted) return;
+
+        let existingRegion = row.querySelector("[data-field='region']")?.innerText || "";
+        let existingRank = regionOrder[existingRegion] || 99;
+
+        let existingBusId = row.querySelector("[data-field='bus_id']")?.innerText || "";
+
+        // Compare region first, then bus_id
+        if (
+            regionRank < existingRank ||
+            (regionRank === existingRank && school.bus_id < existingBusId)
+        ) {
+            tbody.insertBefore(newRow, row);
+            inserted = true;
+        }
+    });
+
+    if (!inserted) {
+        tbody.appendChild(newRow);
+    }
+}
+
+function handleInput(input) {
+    validateNumber(input);
+    updateTotal(input.closest('.cap-group'));
+}
+
+function validateNumber(input) {
+    input.value = input.value.replace(/[^0-9]/g, '');
+}
+
+function updateTotal(container) {
+    let cde = parseInt(container.querySelector('.cap1')?.value) || 0;
+    let tdc = parseInt(container.querySelector('.cap2')?.value) || 0;
+    let pdc = parseInt(container.querySelector('.cap3')?.value) || 0;
+
+    container.querySelector('.total').value = cde + tdc + pdc;
+}
+
+/* ================= DELETE ================= */
+window.deleteRow = function (btn){
+
+    const row = btn.closest("tr");
+    const id = row.dataset.id;
+    const busName = row.querySelector("[data-field='bus_name']").innerText;
+
+    row.classList.add("delete-highlight");
+
+    openConfirm(`Are you sure you want to delete this record?`, function(){
+
+        fetch('/delete_inline/' + id, { 
+            method: 'POST'
+        })
+        .then(res => res.json())
+        .then(res => {
+
+            if(res.success){
+                row.remove(); 
+                showFlash(res.message || "Deleted successfully!", "success");
+            } else {
+                row.classList.remove("delete-highlight");
+                showFlash(res.message || "Delete failed!", "error");
+            }
+
+        })
+        .catch(() => {
+            row.classList.remove("delete-highlight"); 
+            showFlash("Server error! Delete failed.", "error");
+        });
+
+    }, function(){
+        row.classList.remove("delete-highlight");
+    }); 
+}
+
+function openConfirm(message, onConfirm, onCancel) {
+    const modal = document.getElementById("confirmModal");
+    const text = document.getElementById("confirmText");
+    const yesBtn = document.getElementById("confirmYes");
+
+    // set dynamic message
+    text.innerText = message;
+
+    modal.classList.add("show");
+
+    // avoid stacking multiple handlers
+    yesBtn.onclick = function () {
+        closeConfirm();
+        onConfirm();
+    };
+
+    // handle cancel button
+    const cancelBtn = modal.querySelector(".btn-secondary");
+    cancelBtn.onclick = function () {
+        closeConfirm();
+        if (onCancel) onCancel();
+    };
+} 
+
+function closeConfirm(){
+    document.getElementById("confirmModal").classList.remove("show");
+}
+
+/* ================= AUTO TOTAL ================= */
+document.addEventListener("input",function(e){
+
+    if(e.target.dataset && e.target.dataset.field){
+
+        const row=e.target.closest("tr");
+
+        let cap1=parseInt(row.querySelector("[data-field='cap1']").innerText)||0;
+        let cap2=parseInt(row.querySelector("[data-field='cap2']").innerText)||0;
+        let cap3=parseInt(row.querySelector("[data-field='cap3']").innerText)||0;
+
+        row.querySelector(".total").innerText = cap1 + cap2 + cap3;
+    }
+});
+
+/* ================= AUTO FILTER (SERVER SIDE) ================= */
+let currentPage = 1;
+
+function fetchData(page = 1) {
+
+    let search = document.getElementById("searchInput").value;
+    let region = document.getElementById("regionFilter").value;
+
+    fetch(`/admin/schools?search=${encodeURIComponent(search)}&region=${encodeURIComponent(region)}&page=${page}`, {
+        headers: {
+            "X-Requested-With": "XMLHttpRequest"
+        }
+    })
+    .then(res => res.json())
+    .then(data => {
+
+        let tbody = document.getElementById("tableBody");
+        tbody.innerHTML = "";
+
+        if (!data.schools || data.schools.length === 0) {
+            tbody.innerHTML = `
+                <tr id="emptyRow">
+                    <td colspan="13" style="text-align:center; padding:20px;">
+                        No records found
+                    </td>
+                </tr>
+            `;
+            return;
+        }
+
+        data.schools.forEach((school) => {
+
+        // backend array mapping:
+        // [-3] = computed_status (Active / Expired / Pending)
+        // [-2] = display_status (text shown in UI)
+        // [-1] = validity (formatted date)
+
+            const computedStatus = school[school.length - 3];   // Active / Expired / Pending
+            const displayStatus = school[school.length - 2];    // Expiring in X days / Active text
+            const validity = school[school.length - 1];         // formatted date
+
+            let safeStatus = computedStatus
+                ? computedStatus.toLowerCase().replace(" ", "-")
+                : "pending";
+
+            // if (statusRaw === "Expired") safeStatus = "expired";
+            // else if (statusRaw === "Expiring Soon") safeStatus = "expiring-soon";
+            // else if (statusRaw === "Active") safeStatus = "active";
+            // else safeStatus = "pending";
+
+            tbody.innerHTML += `
+            <tr data-id="${school[0]}" class="status-${safeStatus}">
+                
+                <td data-field="bus_id">${school[1]}</td>
+                <td data-field="accreditation">${school[2]}</td>
+                <td data-field="bus_name">${school[3]}</td>
+                <td data-field="cap1">${school[4]}</td>
+                <td data-field="cap2">${school[5]}</td>
+                <td data-field="cap3">${school[6]}</td>
+                <td class="total">${school[7]}</td>
+                <td data-field="org_add">${school[8]}</td>
+                <td data-field="org_type">${school[9]}</td>
+                <td data-field="validity">${validity}</td>
+
+                <!-- FIXED: status display -->
+                <td>
+                    <span class="status-${safeStatus}">
+                        ${displayStatus}
+                    </span>
+                </td>
+                <td data-field="region">${school[12]}</td>
+
+                <td class="action-buttons">
+                    <button type="button" onclick="enableEdit(this)">✏️ Edit</button>
+                    <button type="button" onclick="saveRow(this)" style="display:none;">💾 Save</button>
+                    <button type="button" onclick="cancelEdit(this)" style="display:none;">❌ Cancel</button>
+                    <button type="button" onclick="deleteRow(this)">🗑️ Delete</button>
+                </td>
+            </tr>
+            `;
+        });
+
+        renderPagination(data.page, data.total_pages);
+    });
+}
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    const searchInput = document.getElementById("searchInput");
+    const regionFilter = document.getElementById("regionFilter");
+
+    let debounce;
+
+    // LIVE SEARCH
+    searchInput.addEventListener("input", function () {
+
+        clearTimeout(debounce);
+
+        debounce = setTimeout(() => {
+            currentPage = 1;
+            fetchData(1);
+        }, 400);
+    });
+
+    // REGION FILTER
+    regionFilter.addEventListener("change", function () {
+        currentPage = 1;
+        fetchData(1);
+    });
+
+    // INITIAL LOAD
+    fetchData(1);
+});
+
+function renderPagination(page, total_pages) {
+
+    let container = document.querySelector(".pagination");
+    container.innerHTML = "";
+
+    if (page > 1) {
+        container.innerHTML += `<a href="#" onclick="fetchData(${page-1}); return false;">⬅ Prev</a>`;
+    }
+
+    for (let i = 1; i <= total_pages; i++) {
+        if (i === page) {
+            container.innerHTML += `<strong>${i}</strong>`;
+        } else {
+            container.innerHTML += `<a href="#" onclick="fetchData(${i}); return false;">${i}</a>`;
+        }
+    }
+
+    if (page < total_pages) {
+        container.innerHTML += `<a href="#" onclick="fetchData(${page+1}); return false;">Next ➡</a>`;
+    }
+}
+
+function exportFile(type, mode = "all", region = null) {
+
+    fetch(`/export/${type}`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ 
+            mode: mode,
+            region: region
+        })
+    })
+    .then(res => {
+        if (!res.ok) {
+            throw new Error("Export failed");
+        }
+
+        const disposition = res.headers.get("Content-Disposition");
+        let filename = type === "pdf" ? "export.pdf" : "export.xlsx";
+
+        if (disposition && disposition.includes("filename=")) {
+            filename = disposition
+                .split("filename=")[1]
+                .replace(/"/g, "")
+                .trim();
+        }
+
+        return res.blob().then(blob => ({ blob, filename }));
+    })
+    .then(({ blob, filename }) => {
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement("a");
+
+        a.href = url;
+        a.download = filename;
+
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+    })
+    .catch(err => {
+        console.error(err);
+        alert("Export failed");
+    });
+}
+
+function openExportChoice(type) {
+    document.getElementById("exportChoiceModal").style.display = "flex";
+    window.exportType = type;
+}
+
+function closeExportChoice() {
+    document.getElementById("exportChoiceModal").style.display = "none";
+}
+
+function toggleExportRegion() {
+    const mode = document.querySelector('input[name="exportMode"]:checked').value;
+    const dropdown = document.getElementById("exportRegionSelect");
+
+    if (mode === "region") {
+        dropdown.classList.remove("hidden");
+    } else {
+        dropdown.classList.add("hidden");
+        dropdown.selectedIndex = 0;
+    }
+}
+
+function confirmExport(type) {
+
+    const mode = document.querySelector('input[name="exportMode"]:checked').value;
+
+    let region = null;
+
+    if (mode === "region") {
+        region = document.getElementById("exportRegionSelect").value;
+
+        if (!region) {
+            alert("Please select a region before exporting.");
+            return;
+        }
+    }
+
+    closeExportChoice();
+
+    exportFile(window.exportType, mode, region);
+}
+
+// function showFlash(message, type="success") {
+//     const box = document.getElementById("flashBox");
+
+//     if (!box) return;
+
+//     const div = document.createElement("div");
+//     div.className = `flash-msg flash-${type}`;
+//     div.innerText = message;
+
+//     box.appendChild(div);
+
+//     setTimeout(() => {
+//         div.remove();
+//     }, 3000);
+// }
+
+// FLASH MESSAGE FOR EXISTING BUSINESS ID 
+function showFlash(message, type="success") {
+
+    const flashBox = document.getElementById("flashBox");
+
+    flashBox.innerHTML = `
+        <div class="flash ${type}">
+            ${message}
+        </div>
+    `;
+
+    setTimeout(() => {
+        flashBox.innerHTML = "";
+    }, 3000);
+}
+
+// EVENTS
+// searchInput.addEventListener("keyup", filterTable);
+// regionFilter.addEventListener("change", filterTable); 
+</script>
+
+{% endblock %}
