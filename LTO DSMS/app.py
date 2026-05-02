@@ -102,8 +102,8 @@ def init_db():
 init_db()
 
 def send_otp_email(receiver_email, otp):
-    sender_email = "chbelano@my.cspc.edu.ph"
-    app_password = "gfdyvtbscnrlucvm"
+    sender_email = "" # set an email responsible for sending otp
+    app_password = "" # insert app password provided by google
 
     subject = "Your OTP Verification Code"
     body = f"""
