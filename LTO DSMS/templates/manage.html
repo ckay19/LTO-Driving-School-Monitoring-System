@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Driving School Management</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='manage.css') }}">
+    <!-- PRELOAD BACKGROUND IMAGE -->
+    <link rel="preload" as="image" href="{{ url_for('static', filename='dashboard.png') }}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+
+<body>
+
+<!-- HEADER -->
+<div class="header">
+    <div class="header-left">
+        <a href="{{ url_for('dashboard') }}">
+        <img src="{{ url_for('static', filename='logo.png') }}" alt="LTO Logo" class="logo">
+        </a>
+        DRIVING SCHOOL MONITORING SYSTEM 
+    </div>
+
+    <div class="header-right">
+        <a href="/enroll" class="nav-link"> Enroll Driving School</a>
+        <a href="/manage" class="nav-link active"> Driving Schools</a>
+        <a href="/logout" class="nav-link logout">Logout</a>
+    </div>
+</div>
+
+<!-- FILTER BAR -->
+<div class="search-filter">
+        <input 
+        type="text" 
+        name="search" 
+        id="searchInput"
+        placeholder="Search by ID or Name"
+        value="{{ request.args.get('search','') }}"
+    >
+
+    <input type="hidden" name="page" value="1">
+        
+        <div class="filter-bar">
+            <select name="region" id="regionFilter">
+                <option value="">All Regions</option>
+                <option value="NCR"{{ 'selected' if request.args.get('region') == 'NCR' else '' }}>NCR</option>
+                <option value="CAR"{{ 'selected' if request.args.get('region') == 'CAR' else '' }}>CAR</option>
+                <option value="Region I"{{ 'selected' if request.args.get('region') == 'Region I' else '' }}>Region I</option>
+                <option value="Region II"{{ 'selected' if request.args.get('region') == 'Region II' else '' }}>Region II</option>
+                <option value="Region III"{{ 'selected' if request.args.get('region') == 'Region III' else '' }}>Region III</option>
+                <option value="Region IV-A"{{ 'selected' if request.args.get('region') == 'Region IV-A' else '' }}>Region IV-A</option>
+                <option value="Region IV-B"{{ 'selected' if request.args.get('region') == 'Region IV-B' else '' }}>Region IV-B</option>
+                <option value="Region V"{{ 'selected' if request.args.get('region') == 'Region V' else '' }}>Region V</option>
+                <option value="Region VI"{{ 'selected' if request.args.get('region') == 'Region VI' else '' }}>Region VI</option>
+                <option value="Region VII"{{ 'selected' if request.args.get('region') == 'Region VII' else '' }}>Region VII</option>
+                <option value="Region VIII"{{ 'selected' if request.args.get('region') == 'Region VIII' else '' }}>Region VIII</option>
+                <option value="Region IX"{{ 'selected' if request.args.get('region') == 'Region IX' else '' }}>Region IX</option>
+                <option value="Region X"{{ 'selected' if request.args.get('region') == 'Region X' else '' }}>Region X</option>
+                <option value="Region XI"{{ 'selected' if request.args.get('region') == 'Region XI' else '' }}>Region XI</option>
+                <option value="Region XII"{{ 'selected' if request.args.get('region') == 'Region XII' else '' }}>Region XII</option>
+                <option value="Region XIII"{{ 'selected' if request.args.get('region') == 'Region XIII' else '' }}>Region XIII</option>
+                <option value="BARMM"{{ 'selected' if request.args.get('region') == 'BARMM' else '' }}>BARMM</option>
+            </select>
+        </div>
+    </div>
+
+</div>
+
+<!-- TABLE -->
+<div class="table-container">
+    <table>
+        
+        <!-- HEADER -->
+        <thead>
+            <tr>
+                <th>Business ID</th>
+                <th>Accreditation No.</th>
+                <th>Business Name</th>
+                <th>Address</th>
+                <th>Organization Type</th>
+                <th>Validity</th>
+                <th>Status</th>
+                <th>Region</th>
+            </tr>
+        </thead>
+
+        <!-- BODY -->
+        <tbody id="tableBody">
+        {% if schools %}
+            {% for school in schools %}
+            <tr class="status-{{ school[-3]|lower|replace(' ', '-') }}">
+                
+                <td>{{ school[1] }}</td>
+                <td>{{ school[2] }}</td>
+                <td>{{ school[3] }}</td>
+                <td>{{ school[8] }}</td>
+                <td>{{ school[9] }}</td>
+                <td>{{ school[-1] }}</td>
+                <td>
+                    <span class="status-{{ school[-3]|lower|replace(' ', '-') }}">
+                        {{ school[-2] }}
+                    </span>
+                </td>
+                <td>{{ school[12] }}</td>
+            </tr>
+            {% endfor %}
+        {% else %}
+            <!-- EMPTY STATE -->
+            <tr id="emptyRow">
+                <td colspan="8" style="text-align:center; padding:20px; vertical-align: middle;">
+                    No records found.
+                </td>
+            </tr>
+        {% endif %}
+        </tbody>
+
+    </table>
+    
+    <div class="pagination">
+
+        <!-- Previous -->
+        {% if page > 1 %}
+            <a href="?page={{ page - 1 }}&search={{ search }}&region={{ region }}">⬅ Prev</a>
+        {% endif %}
+    
+        <!-- Page numbers -->
+        {% for p in range(1, total_pages + 1) %}
+            {% if p == page %}
+                <strong>{{ p }}</strong>
+            {% else %}
+                <a href="?page={{ p }}&search={{ search }}&region={{ region }}">{{ p }}</a>
+            {% endif %}
+        {% endfor %}
+    
+        <!-- Next -->
+        {% if page < total_pages %}
+            <a href="?page={{ page + 1 }}&search={{ search }}&region={{ region }}">Next ➡</a>
+        {% endif %}
+    
+    </div>
+
+</div>
+
+<!-- SCRIPT -->
+<script>
+
+    const regionOrder = {
+        "NCR": 1,
+        "CAR": 2,
+        "Region I": 3,
+        "Region II": 4,
+        "Region III": 5,
+        "Region IV-A": 6,
+        "Region IV-B": 7,
+        "Region V": 8,
+        "Region VI": 9,
+        "Region VII": 10,
+        "Region VIII": 11,
+        "Region IX": 12,
+        "Region X": 13,
+        "Region XI": 14,
+        "Region XII": 15,
+        "Region XIII": 16,
+        "BARMM": 17
+    };
+
+/*const searchInput = document.getElementById("searchInput");
+const regionFilter = document.getElementById("regionFilter");
+
+function filterTable() {
+    let search = searchInput.value.toLowerCase();
+    let region = regionFilter.value.toLowerCase();
+
+    let rows = document.querySelectorAll("#tableBody tr");
+    let visibleCount = 0;
+
+    rows.forEach(row => {
+        // skip empty row if exists
+        if (row.id === "emptyRow") return;
+
+        let cells = row.getElementsByTagName("td");
+
+        let textMatch = false;
+        let regionMatch = false;
+
+        // TEXT SEARCH
+        for (let i = 0; i < cells.length; i++) {
+            if (cells[i].textContent.toLowerCase().includes(search)) {
+                textMatch = true;
+                break;
+            }
+        }
+
+        // REGION MATCH
+        let regionCell = cells[7];
+        if (regionCell) {
+            regionMatch = region === "" ||
+            regionCell.textContent.toLowerCase() === region;
+        }
+
+        if (textMatch && regionMatch) {
+            row.style.display = "";
+            visibleCount++;
+        } else {
+            row.style.display = "none";
+        }
+    });*/
+
+let currentPage = 1;
+
+function fetchData(page = 1) {
+
+    let search = document.getElementById("searchInput").value;
+    let region = document.getElementById("regionFilter").value;
+
+    fetch(`/manage?search=${encodeURIComponent(search)}&region=${encodeURIComponent(region)}&page=${page}`, {
+        headers: {
+            "X-Requested-With": "XMLHttpRequest"
+        }
+    })
+    .then(res => res.json())
+    .then(data => {
+
+        let tbody = document.getElementById("tableBody");
+        tbody.innerHTML = "";
+
+        if (!data.schools || data.schools.length === 0) {
+            tbody.innerHTML = `
+                <tr id="emptyRow">
+                    <td colspan="13" style="text-align:center; padding:20px;">
+                        No records found
+                    </td>
+                </tr>
+            `;
+            return;
+        }
+
+        data.schools.forEach((school) => {
+
+        // backend array mapping:
+        // [-3] = computed_status (Active / Expired / Pending)
+        // [-2] = display_status (text shown in UI)
+        // [-1] = validity (formatted date)
+
+            const computedStatus = school[school.length - 3];   // Active / Expired / Pending
+            const displayStatus = school[school.length - 2];    // Expiring in X days / Active text
+            const validity = school[school.length - 1];         // formatted date
+
+            let safeStatus = computedStatus
+                ? computedStatus.toLowerCase().replace(" ", "-")
+                : "pending";
+
+            // if (statusRaw === "Expired") safeStatus = "expired";
+            // else if (statusRaw === "Expiring Soon") safeStatus = "expiring-soon";
+            // else if (statusRaw === "Active") safeStatus = "active";
+            // else safeStatus = "pending";
+
+            tbody.innerHTML += `
+            <tr data-id="${school[0]}" class="status-${safeStatus}">
+                
+                <td data-field="bus_id">${school[1]}</td>
+                <td data-field="accreditation">${school[2]}</td>
+                <td data-field="bus_name">${school[3]}</td>
+                <td data-field="org_add">${school[8]}</td>
+                <td data-field="org_type">${school[9]}</td>
+                <td data-field="validity">${validity}</td>
+
+                <!-- ✅ FIXED: status display -->
+                <td>
+                    <span class="status-${safeStatus}">
+                        ${displayStatus}
+                    </span>
+                </td>
+                <td data-field="region">${school[12]}</td>
+            </tr>
+            `;
+        });
+
+        renderPagination(data.page, data.total_pages);
+    });
+
+    // HANDLE EMPTY STATE
+    let emptyRow = document.getElementById("emptyRow");
+
+    if (visibleCount === 0) {
+        if (!emptyRow) {
+            let tbody = document.getElementById("tableBody");
+            let row = document.createElement("tr");
+            row.id = "emptyRow";
+
+            row.innerHTML = `
+                <td colspan="8" style="text-align:center; padding:20px;">
+                    No records found.
+                </td>
+            `;
+
+            tbody.appendChild(row);
+        }
+    } else {
+        if (emptyRow) {
+            emptyRow.remove();
+        }
+    }
+}
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    const searchInput = document.getElementById("searchInput");
+    const regionFilter = document.getElementById("regionFilter");
+
+    let debounce;
+
+    // LIVE SEARCH
+    searchInput.addEventListener("input", function () {
+
+        clearTimeout(debounce);
+
+        debounce = setTimeout(() => {
+            currentPage = 1;
+            fetchData(1);
+        }, 400);
+    });
+
+    // REGION FILTER
+    regionFilter.addEventListener("change", function () {
+        currentPage = 1;
+        fetchData(1);
+    });
+
+    // INITIAL LOAD
+    fetchData(1);
+});
+
+function renderPagination(page, total_pages) {
+
+    let container = document.querySelector(".pagination");
+    container.innerHTML = "";
+
+    if (page > 1) {
+        container.innerHTML += `<a href="#" onclick="fetchData(${page-1}); return false;">⬅ Prev</a>`;
+    }
+
+    for (let i = 1; i <= total_pages; i++) {
+        if (i === page) {
+            container.innerHTML += `<strong>${i}</strong>`;
+        } else {
+            container.innerHTML += `<a href="#" onclick="fetchData(${i}); return false;">${i}</a>`;
+        }
+    }
+
+    if (page < total_pages) {
+        container.innerHTML += `<a href="#" onclick="fetchData(${page+1}); return false;">Next ➡</a>`;
+    }
+}
+
+
+function highlightExpiry() {
+    const rows = document.querySelectorAll("#tableBody tr");
+
+    rows.forEach(row => {
+        const validityCell = row.querySelector(".validity");
+
+        if (!validityCell) return;
+
+        let validityText = validityCell.innerText.trim();
+
+        if (!validityText) return;
+
+        let parts = validityText.split("/");
+        let expiryDate = new Date(parts[2], parts[0]-1, parts[1]);
+        let today = new Date();
+
+        let diffDays = (expiryDate - today) / (1000 * 60 * 60 * 24);
+
+        // EXPIRED (RED)
+        if (diffDays < 0) {
+            row.style.backgroundColor = "#ffcccc";
+        }
+
+        // EXPIRING WITHIN 60 DAYS (ORANGE)
+        else if (diffDays <= 60) {
+            row.style.backgroundColor = "#ffe0b3";
+        }
+    });
+}
+
+// Run on load
+document.addEventListener("DOMContentLoaded", function () {
+    highlightExpiry();
+});
+
+function addRowToTable(school){
+
+    let tbody = document.getElementById("tableBody");
+
+    let newRow = document.createElement("tr");
+    newRow.setAttribute("data-id", school.id);
+
+    let region = school.region || "";
+    let regionRank = regionOrder[region] || 99;
+
+    newRow.innerHTML = `
+        <td data-field="bus_id">${school.bus_id}</td>
+        <td data-field="accreditation">${school.accreditation}</td>
+        <td data-field="bus_name">${school.bus_name}</td>
+        <td data-field="cap1">${school.cap1}</td>
+        <td data-field="cap2">${school.cap2}</td>
+        <td data-field="cap3">${school.cap3}</td>
+        <td class="total">${school.total}</td>
+        <td data-field="org_add">${school.org_add}</td>
+        <td data-field="org_type">${school.org_type}</td>
+        <td data-field="validity">${school.validity}</td>
+        <td>
+            <span class="status-${(school.status || 'pending').toLowerCase()}">
+                ${school.status || 'Pending'}
+            </span>
+        </td>
+        <td data-field="region">${school.region}</td>
+    `;
+
+    // 🔥 FIND CORRECT POSITION
+    let inserted = false;
+
+    let rows = tbody.querySelectorAll("tr");
+
+    rows.forEach(row => {
+
+        if (inserted) return;
+
+        let existingRegion = row.querySelector("[data-field='region']")?.innerText || "";
+        let existingRank = regionOrder[existingRegion] || 99;
+
+        let existingBusId = row.querySelector("[data-field='bus_id']")?.innerText || "";
+
+        // Compare region first, then bus_id
+        if (
+            regionRank < existingRank ||
+            (regionRank === existingRank && school.bus_id < existingBusId)
+        ) {
+            tbody.insertBefore(newRow, row);
+            inserted = true;
+        }
+    });
+
+    // If no position found → append at bottom
+    if (!inserted) {
+        tbody.appendChild(newRow);
+    }
+}
+</script>
+
+</body>
+</html>
