@@ -1,0 +1,1010 @@
+*{
+    margin:0;
+    padding:0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+/* ===============================
+   BODY BACKGROUND
+================================= */
+body{
+    background: url('/static/dashboard.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    min-height:100vh;
+}
+
+/* PAGE HEADER */
+.page-header{
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    background-color: #0056b3;
+    color: white;
+    padding: 22px 40px;
+}
+
+/* HEADER LEFT */
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 12px; 
+    font-size: 24px;
+    font-weight: bold; 
+}
+
+/* LOGO */
+.logo {
+    height: 60px;   
+    width: auto; 
+}
+
+/* NAV */
+.header-right {
+    display: flex;
+    gap: 25px;
+    font-size:14px;
+}
+
+.page-header h2{
+    margin:0;
+    font-size:22px;
+}
+
+/* ===============================
+   MAIN CONTENT AREA
+================================= */
+/* MAIN CONTENT */
+.main-content {
+    margin-left: 0px;   
+    padding: 30px;
+    transition: all 0.35s ease;
+}
+
+/* ===============================
+   CONTENT CARD
+================================= */
+.content-box{
+    background: rgba(17,89,213,0.75);
+    padding:30px;
+    border-radius:12px;
+    box-shadow:0px 0px 15px rgba(17, 89, 213, 0.726);
+    color:white;
+}
+
+/* ===============================
+   HEADINGS
+================================= */
+h1, h2{
+    margin-bottom:20px;
+}
+
+/* ===============================
+   TABLE DESIGN
+================================= */
+table{
+    width:100%;
+    border-collapse:collapse;
+    background:white;
+    border: 1px solid #ccc;
+    border-radius:8px;
+    overflow:hidden;
+    box-shadow:0 2px 10px rgba(0,0,0,0.1);
+}
+
+th{
+    background-color:rgba(17, 89, 213, 0.726); 
+    color:white;
+    padding: 10px;
+    text-align: left;
+    resize: horizontal;
+    overflow: auto;
+}
+
+td {
+    padding: 10px;
+    border-top: 1px solid #ddd;
+    font-size: 13px;
+}
+
+td, th{
+    border-right: 1px solid #ddd;
+}
+
+tr:nth-child(even){
+    background:17, 89, 213, 0.726;
+}
+
+/* ===============================
+    BUTTONS
+================================= */
+button{
+    padding:10px 18px;
+    border:none;
+    background:#007BFF;
+    border-radius:5px;
+    cursor:pointer;
+}
+
+button:hover{
+    background:#0056b3;
+}
+
+/* ===============================
+   FORM INPUTS
+================================= */
+input, select{
+    width:100%;
+    padding:10px;
+    margin:8px 0;
+    border-radius:5px;
+    border:1px solid #ccc;
+}
+
+/* ===============================
+   ERROR TEXT
+================================= */
+.error{
+    color:red;
+    font-size:14px;
+    margin-top:5px;
+}
+
+/* ACTION BUTTONS */
+button {
+    background-color: #0056b3;
+    color: white;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #003f88;
+}
+
+/* SCHOOLS */
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+/* BODY BACKGROUND */
+body{
+    font-family: Arial, Helvetica, sans-serif;
+    background:url('/static/dashboard.png') no-repeat center center fixed;
+    background-size:cover;
+    padding-top:90px;
+}
+
+/* PAGE TITLE */
+h2{
+    margin-left:10px;
+    margin-bottom:15px;
+    font-size:26px;
+    color:white;
+}
+
+/* PAGE HEADER */
+.page-header{
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    background-color: #0056b3;
+    color: white;
+    padding: 22px 40px;
+}
+
+.page-header h2{
+    margin:0;
+    font-size:22px;
+}
+
+/* ============================
+TOP BAR (SEARCH + ACTIONS)
+=============================== */
+/* .top-bar{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+
+    margin: 0 40px 10px 40px; 
+    padding: 10px 0;
+    width: 100%;
+ 
+    border-radius:10px;
+    box-shadow:0 2px 10px rgba(0, 0, 0, 0);
+} */
+
+.header-left{
+    display:flex;
+    gap:10px;
+    align-items:center;
+}
+
+/* SEARCH + FILTER BAR */
+.top-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 0 20px; 
+    margin-bottom: 10px;
+}
+
+.search-filter {
+    align-items:center;
+    display:flex; 
+    justify-content:flex-end; 
+    gap:10px; 
+    margin: 0; 
+}
+
+/* SEARCH INPUT */
+#searchInput {
+    width: 250px;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    outline: none;
+}
+
+/* FILTER DROPDOWN */
+#regionFilter {
+    width: 130px;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+/* EMPTY TABLE ROW */
+#emptyRow td {
+    text-align: center;
+    color: #777;
+    font-style: italic;
+}
+
+/* SEARCH FORM
+form{
+    display:inline;
+    align-items:center;
+    display:flex; 
+    justify-content:flex-end; 
+    gap:10px; 
+    margin: 0 40px; 
+}
+
+form input,
+form select{
+    padding:8px;
+    border:1px solid #ccc;
+    border-radius:4px;
+}
+
+#searchInput {
+    width: 250px;
+}
+
+form select {
+    width: 130px;
+}
+
+#emptyRow td {
+    text-align: center;
+    color: #777;
+    font-style: italic;
+} */
+
+/* BUTTON + LINK STYLE */
+/* button,
+a{
+    padding:8px 14px;
+    border:none;
+    border-radius:5px;
+    background:#0056b3;
+    color:white;
+    text-decoration:none;
+    cursor:pointer;
+    font-size:16px;
+}
+
+button:hover,
+a:hover{
+    background:#003f88;
+} */
+
+.nav-link {
+    color: white;
+    text-decoration: none;
+    font-size: 16px;
+    padding: 6px 10px;
+    border-radius: 4px;
+
+    display: flex;
+    align-items: center;
+    gap: 5px; 
+}
+
+.nav-link:hover {
+    background-color: #003f88;
+}
+
+.nav-link.active {
+    font-weight: bold;
+}
+
+.nav-link.logout:hover {
+    color: #c9302c;
+    background: #003f88; 
+} 
+
+/* ===============================
+   TABLE WRAPPER
+================================= */
+table{
+    width:100%; 
+    border-collapse:collapse;
+    background:white;
+    border-radius:8px;
+    overflow:hidden;
+    box-shadow:0 2px 10px rgba(0,0,0,0.1);
+}
+
+/* TABLE HEADER */
+th{
+    background-color: rgba(17, 89, 213, 0.726);
+    color:white;
+    padding:12px;
+    text-align:left;
+    font-size:14px;
+}
+
+/* TABLE CELLS */
+td{
+    padding:10px;
+    border-top:1px solid #ddd;
+    font-size:13px;
+}
+
+/* STRIPED ROWS */
+tr:nth-child(even){
+    background: transparent;
+}
+
+/* HOVER EFFECT */
+tr:hover{
+    background:#eef3f7;
+}
+
+/* EDITABLE CELL */
+td[contenteditable="true"]{
+    background:#eef;
+    outline:1px #ccc;
+}
+
+/* ACTION BUTTON COLORS */
+td button{
+    margin:2px;
+    padding:6px 10px;
+    font-size:13px;
+}
+
+/* DELETE BUTTON */
+td button:nth-child(4){
+    background: rgba(#0b3d91);
+}
+
+td button:nth-child(4):hover{
+    background: #003f88;
+}
+
+/* ACTION BUTTON STACK */
+.action-buttons{
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+}
+
+.action-buttons button{
+    width:100%;
+    padding:6px 10px;
+    font-size:13px;
+}
+
+/* ===============================
+   MAIN CONTENT AREA
+================================= */
+/* MAIN CONTENT */
+.main-content {
+    margin-left: 0px;  
+    padding: 30px;
+}
+
+/* ===============================
+   CONTENT CARD
+================================= */
+.content-box{
+    background: rgba(17,89,213,0.75);
+    padding:30px;
+    border-radius:12px;
+    box-shadow:0px 0px 15px rgba(17, 89, 213, 0.726);
+    color:white;
+}
+
+/* ===============================
+   HEADINGS
+================================= */
+h1, h2{
+    margin-bottom:20px;
+}
+
+/* ===============================
+   TABLE DESIGN
+================================= */
+table{
+    width:100%;
+    border-collapse:collapse;
+    background:white;
+    border-radius:8px;
+    overflow:hidden;
+}
+
+th:nth-child(1), td:nth-child(1) { width: 150px; }  /* Bus ID */
+th:nth-child(2), td:nth-child(2) { width: 150px; }  /* Accreditation */
+th:nth-child(3), td:nth-child(3) { width: 220px; }  /* Business Name */
+th:nth-child(4), td:nth-child(4) { width: 60px; }  /* CDE */
+th:nth-child(5), td:nth-child(5) { width: 60px; }  /* TDC */
+th:nth-child(6), td:nth-child(6) { width: 60px; }  /* PDC */
+th:nth-child(7), td:nth-child(7) { width: 70px; }  /* Total */
+th:nth-child(8), td:nth-child(8) { width: 420px; }  /* Address*/
+th:nth-child(9), td:nth-child(9) { width: 100px; }  /* Org Type */
+th:nth-child(-1), td:nth-child(-1) { width: 70px; }  /* Validity */
+th:nth-child(-3), td:nth-child(-3) { width: 120px; }  /* Status */
+th:nth-child(12), td:nth-child(12) { width: 90px; }  /* Region */
+
+th:nth-child(10),
+td:nth-child(10),
+th:nth-child(11),
+td:nth-child(11),
+th:nth-child(12),
+td:nth-child(12) {
+    text-align: center;
+    vertical-align: middle;
+}
+
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input[type="number"] {
+    appearance: textfield;
+}
+
+/* ===============================
+   BUTTONS
+================================= */
+button{
+    padding:10px 18px;
+    border:none;
+    background:#007BFF; 
+    border-radius:5px;
+    cursor:pointer;
+}
+
+button:hover{
+    background:#0056b3;
+}
+
+/* ===============================
+   FORM INPUTS
+================================= */
+input, select{
+    width:100%;
+    padding:10px;
+    margin:8px 0;
+    border-radius:5px;
+    border:1px solid #ccc;
+}
+
+/* ===============================
+   ERROR TEXT
+================================= */
+.error{
+    color:red;
+    font-size:14px;
+    margin-top:5px;
+}
+
+/* ACTION BUTTONS */
+button {
+    background-color: #0056b3;
+    color: white;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #003f88;
+}
+
+/* ====================
+   AUDIT LOG FILTER 
+======================= */
+
+.audit-filter{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin:0 40px 15px 40px;
+}
+
+/* LEFT SIDE EXPORT */
+.export-left{
+    display:flex;
+}
+
+/* RIGHT SIDE FILTERS */
+.filters-right{
+    display:flex;
+    gap:10px;
+    align-items:center;
+    position: relative;
+    top: 50px;
+}
+
+.filters-bar{
+    display:flex;
+    gap:10px;
+    align-items:center;
+    position: relative;
+    top: 0px;
+    width: 50%; 
+}
+
+.filters-left{
+    display:flex;
+    margin-left:-25px;
+}
+
+/* EXPORT BUTTON STYLE */
+.export-btn{
+    background:#0056b3;
+    color:white;
+    padding:8px 14px;
+    border-radius:5px;
+    text-decoration:none;
+    font-size:14px;
+}
+
+.export-btn:hover{
+    background:#003f88;
+}
+
+/* TOGGLE BUTTON */
+#toggle-btn {
+    position: fixed;   
+    top: 15px;
+    left: 245px;
+    z-index: 1000;
+
+    background: #0056b3;
+    color: white;
+    border: none;
+    font-size: 22px;
+    padding: 8px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+
+    transition: all 0.3s ease;
+}
+
+#toggle-btn.closed {
+    left: 15px;
+}
+
+#toggle-btn.moved {
+    left: 15px;
+}
+
+/* MODAL BACKGROUND */
+.modal {
+    display: flex;
+    position: fixed;
+    z-index: 999;
+    left: 0;
+    top: 10%;
+    width: 100%;
+    height: 90vh;
+    background: rgba(0,0,0,0.5);
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: 0.2s;
+}
+
+.modal.show {
+    opacity: 1;
+    pointer-events: auto; 
+}
+
+/* MODAL BOX */
+.modal-content {
+    background: rgba(255, 255, 255, 0.74); 
+    width: 400px;
+    max-height: 80vh;
+    overflow-y: auto;
+    margin: 8% auto;
+    padding: 20px;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: center;
+}
+
+/* INPUTS */
+.modal-content input {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    width: 100%;
+}
+
+/* BUTTONS */
+.modal-buttons {
+    /* position: sticky;
+    bottom: 0; */
+    padding-top: 10px;
+    display: flex;
+    justify-content: space-between;
+    gap: 40px;
+}
+
+.confirm-box {
+    background: #c7d2de; 
+    padding: 24px;
+    border-radius: 12px;
+    width: 360px;
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.confirm-title {
+    font-size: 18px;
+    font-weight: 600;
+    margin: 0;
+    color: #222;
+}
+
+.confirm-text {
+    font-size: 14px;
+    color: #555;
+    margin: 0;
+}
+
+.confirm-actions {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 10px;
+}
+
+.btn-danger {
+    background: #dc3545;
+    color: white;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.btn-secondary {
+    background: #e9ecef;
+    color: #333;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+tr.delete-highlight {
+    background-color: #ffe5e5;
+    outline: 2px solid #dc3545;
+}
+
+.audit-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.audit-table th, .audit-table td {
+    padding: 10px;
+    border: 1px solid #ccc;
+}
+
+/* ADMIN = BLUE */
+.audit-table tr.admin {
+    background-color: rgba(13, 71, 161, 0.1);
+}
+
+/* USER = GREEN */
+.audit-table tr.user {
+    background-color: rgba(46, 125, 50, 0.1); 
+}
+
+/* HOVER EFFECT */
+.audit-table tr:hover {
+    background-color: rgba(0,0,0,0.05);
+}
+
+.audit-filter {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+/* LEFT SIDE (DATES + EXPORT STACK) */
+.filters-left {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: flex-start;
+}
+
+/* DATE ROW */
+.filters-dates {
+    display: flex;
+    gap: 10px;
+}
+
+/* RIGHT SIDE (SEARCH + ROLE) */
+.filters-right {
+    display: flex;
+    gap: 10px;
+    margin-right: 60px; 
+    margin-top: 13px; 
+    width: 400px; 
+}
+
+/* INPUT STYLE */
+.audit-filter input,
+.audit-filter select {
+    padding: 6px 10px;
+    height: 34px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+}
+
+/* DATE GROUP */
+.date-group {
+    display: flex;
+    flex-direction: column;
+    font-size: 12px;
+}
+
+#flashBox {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 99999;
+    pointer-events: none;
+}
+
+.flash-msg {
+    padding: 12px 18px;
+    margin-bottom: 10px;
+    border-radius: 6px;
+    color: white;
+    font-weight: 500;
+    animation: fadeIn 0.3s ease;
+    pointer-events: auto;
+}
+
+.flash-success { background: #28a745; }
+.flash-error { background: #dc3546f5; }
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+tr.status-expired td {
+    background: #ffcccc !important;
+}
+
+tr.status-expiring-soon td {
+    background: #ffde209a !important;
+}
+
+tr.status-pending td {
+    background: #e0e0e0 !important;
+}
+
+tr.status-active td {
+    background: transparent;
+}
+
+.pagination {
+    margin-top: 15px;
+    text-align: center;
+}
+
+.pagination a {
+    padding: 4px 8px;
+    margin: 2px;
+    background: #007bff;
+    color: white;
+    text-decoration: none;
+    border-radius: 4px;
+}
+
+.pagination a:hover {
+    background: #0056b3;
+}
+
+.pagination strong {
+    padding: 2px 4px;
+    margin: 2px;
+    background: #28a745;
+    color: white;
+    border-radius: 4px;
+}
+
+.export-modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.55);
+    backdrop-filter: blur(4px);
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+.export-box {
+    background: #ffffff;
+    width: 360px;
+    padding: 24px;
+    border-radius: 14px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    text-align: center;
+    animation: popIn 0.2s ease-out;
+}
+
+.export-box h3 {
+    margin-bottom: 10px;
+    font-size: 20px;
+    font-weight: 600;
+}
+
+.export-box p {
+    margin-bottom: 18px;
+    color: #666;
+    font-size: 14px;
+}
+
+.export-box select {
+    width: 100%;
+    padding: 10px;
+    margin-top: 10px;
+    margin-bottom: 18px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    outline: none;
+}
+
+.export-box button {
+    width: 100%;
+    padding: 10px;
+    margin: 6px 0;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: 0.2s;
+}
+
+.export-box button:first-of-type {
+    background: #2d6cdf;
+    color: white;
+}
+
+.export-box button:first-of-type:hover {
+    background: #1f56b3;
+}
+
+.export-box button:nth-of-type(2) {
+    background: #f0f0f0;
+}
+
+.export-box button:nth-of-type(2):hover {
+    background: #e0e0e0;
+}
+
+.export-box button:last-of-type {
+    background: transparent;
+    color: #888;
+}
+
+.export-box button:last-of-type:hover {
+    color: #000;
+}
+
+@keyframes popIn {
+    from {
+        transform: scale(0.95);
+        opacity: 0;
+    }
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+} 
+
+.hidden {
+    display: none;
+}
+
+/*  FLASH WARNING FOR EXISTING BUS ID */  
+#flashBox{
+    position: fixed;
+    top: 80px;
+    right: 20px;
+    z-index: 9999;
+}
+
+.flash{
+    padding: 12px 18px;
+    border-radius: 6px;
+    color: white;
+    font-weight: bold;
+    margin-bottom: 10px;
+    animation: fadeIn 0.3s ease;
+}
+
+.flash.success{
+    background: #28a745;
+}
+
+.flash.error{
+    background: #dc3545;
+}
+
+@keyframes fadeIn{
+    from{opacity:0; transform:translateY(-10px);}
+    to{opacity:1; transform:translateY(0);}
+}
