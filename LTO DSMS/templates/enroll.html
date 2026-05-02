@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Enroll Driving School</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='enroll.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <!-- PRELOAD BACKGROUND IMAGE -->
+    <link rel="preload" as="image" href="{{ url_for('static', filename='dashboard.png') }}">
+</head>
+<body class="enroll-page">
+
+<div class="enroll-wrapper">
+
+    <a href="/dashboard" class="back-icon"> ⬅ Back to Dashboard</a>
+
+    <div class="enroll-left">
+
+        <h2>Enroll Driving School</h2>
+
+        <div class="flash-container">
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="flash {{ category }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        </div>
+
+        <form method="POST" class="enroll-form">
+            <div class="form-grid1">
+                <input type="text" name="bus_id" id="bus_id" placeholder="Business ID" required>
+                <input type="text" name="accreditation" placeholder="Accreditation No." required>
+
+                <input type="text" name="bus_name" placeholder="Business Name" required>
+
+                <input type="date" id="validity" name="validity" required>
+                <input type="text" id="org_type" name="org_type" placeholder="Organization Type" required>
+                
+                <select id="status" name="status" required>
+                    <option value="">Select Status</option>
+                    <option value="Active">Active</option>
+                    <option value="Expired">Expired</option>
+                    <option value="Pending">Pending</option>
+                </select>
+            </div>
+            
+            <div class="form-grid2">
+                <select id="region" name="region" required>
+                    <option value="" disabled selected>Select Region</option>
+                    <option value="NCR">NCR</option>
+                    <option value="CAR">CAR</option>
+                    <option value="Region I">Region I</option>
+                    <option value="Region II">Region II</option>
+                    <option value="Region III">Region III</option>
+                    <option value="Region IV-A">Region IV-A</option>
+                    <option value="Region IV-B">Region IV-B</option>
+                    <option value="Region V">Region V</option>
+                    <option value="Region VI">Region VI</option>
+                    <option value="Region VII">Region VII</option>
+                    <option value="Region VIII">Region VIII</option>
+                    <option value="Region IX">Region IX</option>
+                    <option value="Region X">Region X</option>
+                    <option value="Region XI">Region XI</option>
+                    <option value="Region XII">Region XII</option>
+                    <option value="Region XIII">Region XIII</option>
+                    <option value="BARMM">BARMM</option>
+                </select>
+
+                <!-- ADDRESS GROUP -->
+                <div class="address-group">
+
+                    <input type="hidden" name="org_add" id="org_add">
+
+                    <select id="province" name="province">
+                        <option value="">Select Province</option>
+                    </select>
+
+                    <select id="city" name="city">
+                        <option value="">Select City</option>
+                    </select>
+
+                    <select id="barangay" name="barangay">
+                        <option value="">Select Barangay</option>
+                    </select>
+                    
+                    <input type="text" name="street" id="street" placeholder="Street / Zone" required>
+
+                    <input type="number" name="zipcode" id="zipcode" placeholder="ZIP Code" inputmode="numeric" pattern="[0-9]*" maxlength="4" required> 
+
+                </div>
+            </div>
+            
+            <button type="submit" class=" submit-btn">Submit Enrollment</button>
+
+        </form>
+    </div>
+
+
+<!-- <script>
+setTimeout(function(){
+    let flash = document.getElementById("flash-message");
+    if(flash){
+        flash.style.opacity = "0";
+        setTimeout(()=> flash.remove(), 500);
+    }
+},3000);
+</script> -->
+
+<script>
+setTimeout(() => {
+    document.querySelectorAll(".flash").forEach(flash => {
+        flash.style.opacity = "0";
+        flash.style.transform = "translateX(120%)";
+
+        setTimeout(() => flash.remove(), 400);
+    });
+}, 3000);
+</script>
+
+<script>
+/*
+==================================================
+FULL PHILIPPINES ADDRESS SYSTEM
+==================================================
+*/
+document.addEventListener("DOMContentLoaded", function () {
+    if (!document.getElementById("region").value) {
+        document.getElementById("region").value = "NCR";
+    }
+    initProvinces();
+});
+
+const province = document.getElementById("province");
+const city = document.getElementById("city");
+const barangay = document.getElementById("barangay");
+const orgAdd = document.getElementById("org_add");
+
+function initProvinces() {
+    const province = document.getElementById("province");
+    const region = document.getElementById("region").value;
+    province.innerHTML = '<option value="">Loading provinces...</option>';
+
+    if (region === "NCR") {
+
+        province.innerHTML = `
+            <option value="NCR" selected>Metro Manila</option>
+        `;
+
+        loadNcrCities();
+        return;
+    }
+
+    fetch('https://psgc.gitlab.io/api/provinces/')
+        .then(res => res.json())
+        .then(data => {
+            data.sort((a, b) => a.name.localeCompare(b.name));
+            data.forEach(p => {
+                province.innerHTML += `<option value="${p.code}">${p.name}</option>`;
+            });
+        });
+}
+
+function loadNcrCities() {
+
+    const city = document.getElementById("city");
+
+    city.innerHTML = '<option value="">Select City</option>';
+
+    fetch('https://psgc.gitlab.io/api/regions/130000000/cities-municipalities/')
+        .then(res => res.json())
+        .then(data => {
+
+            data.forEach(c => {
+                city.innerHTML += `
+                    <option value="${c.code}">
+                        ${c.name}
+                    </option>
+                `;
+            });
+        });
+}
+
+document.getElementById("region").addEventListener("change", function(){
+    initProvinces();
+});
+
+/* PROVINCE CHANGE */
+province.addEventListener("change", function(){
+
+    city.innerHTML =
+    '<option value="">Select City</option>';
+
+    barangay.innerHTML =
+    '<option value="">Select Barangay</option>';
+
+    orgAdd.value = "";
+
+    fetch(`https://psgc.gitlab.io/api/provinces/${this.value}/cities-municipalities/`)
+    .then(res => res.json())
+    .then(data => {
+
+        data.forEach(c => {
+            city.innerHTML += `
+                <option value="${c.code}">
+                    ${c.name}
+                </option>`;
+        });
+    });
+});
+
+/* CITY CHANGE */
+city.addEventListener("change", function(){
+
+    barangay.innerHTML =
+    '<option value="">Select Barangay</option>';
+
+    orgAdd.value = "";
+
+    fetch(`https://psgc.gitlab.io/api/cities-municipalities/${this.value}/barangays/`)
+    .then(res => res.json())
+    .then(data => {
+
+        data.forEach(b => {
+            barangay.innerHTML += `
+                <option value="${b.name}">
+                    ${b.name}
+                </option>`;
+        });
+    });
+});
+
+/* BUILD ADDRESS */
+barangay.addEventListener("change", function(){
+
+    let provinceName =
+    province.options[province.selectedIndex].text;
+
+    let cityName =
+    city.options[city.selectedIndex].text;
+
+    let brgyName =
+    barangay.value;
+
+    let street = document.getElementById("street").value.trim();
+
+    let zip = document.getElementById("zipcode").value.trim();
+
+    orgAdd.value =
+    `${street}, ${brgyName}, ${cityName}, ${provinceName}, ${zip}`;
+});
+
+document.getElementById("bus_id").addEventListener("blur", function () {
+
+    const input = this;
+    const busId = input.value.trim();
+
+    if (!busId) return;
+
+    fetch("/check_bus_id?bus_id=" + busId)
+        .then(res => res.json())
+        .then(data => {
+
+            if (data.exists) {
+                showFlash("Business ID already exists!", "error");
+                input.style.border = "2px solid red";
+            } else {
+                input.style.border = "";
+            }
+
+        })
+        .catch(() => {
+            showFlash("Unable to verify Business ID.", "error");
+        });
+});
+</script>
+
+</div>
+
+</body>
+</html>
