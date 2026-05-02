@@ -1,0 +1,195 @@
+/* .enroll-right img {
+    width: 150px;
+    margin-top: 20px;
+} */
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    background: url('/static/dashboard.png');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center center;
+    /*background-color: #f4f6f9; */
+    padding-top: 90px;
+} 
+
+
+.enroll-wrapper {
+    position: relative;
+    display: flex;
+    height: 90vh;
+    width: 100%;
+    margin: auto;
+    gap: 40px;
+}
+
+.back-icon {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+
+    color: white;
+    font-size: 16px;
+    text-decoration: none;
+
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.back-icon:hover {
+    opacity: 0.7;
+    transform: scale(1.1);
+}
+
+.enroll-form input,
+.enroll-form select{
+    width: 100%;
+    height: 52px;
+
+    padding: 12px 18px;
+    font-size: 15px;
+
+    border-radius: 10px;
+    border: none;
+    outline: none;
+
+    background: #e6e6e6;
+    color: #333;
+
+    box-sizing: border-box;
+}
+
+.enroll-form select{
+    appearance:none;
+    -webkit-appearance:none;
+    -moz-appearance:none;
+    margin-left: 8px;
+    margin-top: 8px;
+}
+
+
+.form-grid2{
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+    margin-top: 1px;
+}
+
+/* .form-grid1{
+    display:flex;
+    flex-direction:column;
+    gap:22px;
+}
+
+.form-grid2{
+    display:flex;
+    flex-direction:column;
+    gap:18px;
+} */
+
+/* .address-group{
+    display:flex;
+    position: relative;
+    grid-template-columns: 1fr 1fr;
+    gap:22px;
+    margin-bottom: 10px;
+} */
+
+.address-group input#zipcode{
+    margin-top:0;  
+}
+
+#street{
+    margin-top:15px;  
+}
+
+#barangay{
+    margin-top:10px;   
+}
+
+#city{
+    margin-top:15px;   
+}
+
+#status{
+    padding-left:20px;
+    margin-top: 10px;
+}
+
+.enroll-form input[type="number"]::-webkit-outer-spin-button,
+.enroll-form input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.enroll-form select{
+    appearance: auto;
+    -webkit-appearance: menulist;
+    -moz-appearance: menulist;
+}
+
+.submit-btn{
+    width:100%;
+    margin-top:0;
+    margin-left: 10px;
+    height:50px;
+
+    background:#1e7df2;
+    color:white;
+    font-size:18px;
+    border:none;
+    border-radius:10px;
+    cursor:pointer;
+}
+
+.flash-container{
+    position: fixed;
+    top: 80px;
+    right: 50px;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.flash{
+    min-width: 260px;
+    padding: 14px 18px;
+    border-radius: 8px;
+    color: white;
+    font-weight: 600;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.25);
+    animation: slideIn 0.4s ease;
+}
+
+/* categories */
+.flash.success{
+    background:#28a745;
+    color:#fff !important;
+}
+
+.flash.error{
+    background:#dc3546f5;
+    color:#fff !important;
+}
+
+.flash.warning{
+    background:#f59e0b;
+    color:#fff !important;
+}
+
+.flash.info{
+    background:#0dcaf0;
+    color:#fff !important;
+}
+
+@keyframes slideIn{
+    from{
+        transform: translateX(120%);
+        opacity:0;
+    }
+    to{
+        transform: translateX(0);
+        opacity:1;
+    }
+}
