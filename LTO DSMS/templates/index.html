@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Home</title>
+    <!-- PRELOAD BACKGROUND IMAGE -->
+    <link rel="preload" as="image" href="{{ url_for('static', filename='lto(2).png') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<div class="home-container">
+
+    <div class="header">
+        <img src="{{ url_for('static', filename='logo.png') }}" class="logo-img">
+        <h1 class="title">DRIVING SCHOOL MONITORING SYSTEM</h1>
+    </div>
+
+    <div class="nav-buttons">
+        <a href="/login">Login</a>
+        <a href="/signup">Sign Up</a>
+    </div>
+
+    <div class="tagline">
+        A front line government agency showcasing fast and efficient public service 
+        for a progressive land transport sector
+    </div> 
+
+</div>
+
+</body>
+</html>
