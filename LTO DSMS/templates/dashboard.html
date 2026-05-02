@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='dashboard.css') }}">
+    <!-- PRELOAD BACKGROUND IMAGE -->
+    <link rel="preload" as="image" href="{{ url_for('static', filename='dashboard.png') }}">
+    <link rel="preload" as="image" href="{{ url_for('static', filename='enroll.png') }}">
+    <link rel="preload" as="image" href="{{ url_for('static', filename='management.png') }}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="header">
+    <div class="header-left">
+        <img src="{{ url_for('static', filename='logo.png') }}" class="logo">
+        DRIVING SCHOOL MONITORING SYSTEM
+    </div>
+
+    <div class="header-right">
+        <a href="/logout" class="logout">Logout</a>
+    </div>
+</header>
+
+<!-- WELCOME -->
+<div class="welcome-container">
+    <h2>Welcome, {{ session['username'] }}!</h2>
+</div>
+
+<!-- OPTIONS -->
+<div class="options-container">
+
+    <a href="/enroll" class="card enroll-card">
+    <div class="card-content">
+        <h3>Enroll Driving School</h3>
+        <p>Register a new driving school into the system.</p>
+    </div>
+    </a>
+
+    <a href="/manage" class="card management-card">
+    <div class="card-content">
+        <h3>Driving School Monitoring</h3>
+        <p>View existing driving schools.</p>
+    </div>
+    </a>
+
+</div>
+
+</body>
+</html>
